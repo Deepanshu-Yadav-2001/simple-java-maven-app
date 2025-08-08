@@ -4,6 +4,17 @@ pipeline {
         skipStagesAfterUnstable()
     }
     stages {
+        stage('Install Maven') {
+            steps {
+                sh '''
+                    MAVEN_VERSION=3.9.9
+                    apt-get update && apt-get install -y curl tar
+                    curl -fsSL https://downloads.apache.org/maven/maven-3/${MAVEN_VERSION}/binaries/apache-maven-${MAVEN_VERSION}-bin.tar.gz | tar -xz -C /opt
+                    ln -sf /opt/apache-maven-${MAVEN_VERSION}/bin/mvn /usr/bin/mvn
+                    mvn -v
+                '''
+            }
+        }
         stage('Build') {
             steps {
                 sh 'mvn -B -DskipTests clean package'
